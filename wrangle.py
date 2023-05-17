@@ -63,7 +63,7 @@ def wrangle_zillow(df):
     Further shrinking the outliers to prevent skewing of the data for the 
     target audience.
     """
-    print(f"Returning Zillow's Single Family Residential Homes from 2017")
+    print(f"Prepare Details")
     
     # rename columns
     df = df.rename(columns = {'bedroomcnt':'bed', 'bathroomcnt':'bath', 'calculatedfinishedsquarefeet':\
@@ -76,7 +76,7 @@ def wrangle_zillow(df):
 
     # drop all nulls
     df_clean = df.dropna()
-    print(f"NaN's removed: Percent Original Data Remaining: {round(df_clean.shape[0]/df.shape[0]*100,0)}")
+    print(f"Nulls removed: Percent Original Data Remaining: {round(df_clean.shape[0]/df.shape[0]*100,0)}")
 
     # change data types and map FIPS code
     df_clean.county = df_clean.county.map({6037:"LA", 6059:"Orange", 6111:"Ventura"})
@@ -95,6 +95,8 @@ def wrangle_zillow(df):
 
     for col in col_cat: 
         print(f"{col.capitalize().replace('_', ' ')} is a categorical column.") 
+    print(f"--------------------------------------------")
+    print('Outliers Calculated with IQR Ranges, multiplier 1.5')
 
     for col in col_num: 
         q1 = df_clean[col].quantile(.25) 
@@ -102,11 +104,10 @@ def wrangle_zillow(df):
         iqr = q3 - q1 
         upper_bound = q3 + (1.5 * iqr) 
         lower_bound = q1 - (1.5 * iqr) 
-        print(f"{col.capitalize().replace('_', ' ')} <= {upper_bound.round(2)} and > {lower_bound.round(2)}") 
+        print(f"{col.capitalize().replace('_', ' ')} < = {upper_bound.round(2)} and > {lower_bound.round(2)}") 
         df_clean = df_clean[(df_clean[col] <= upper_bound) & (df_clean[col] >= lower_bound)] 
 
     print(f"Outliers removed: Percent Original Data Remaining: {round(df_clean.shape[0]/df.shape[0]*100,0)}")
-    print(f"DataFrame is clean and ready for exploration :)")
 
     return df_clean
 

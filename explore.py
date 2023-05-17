@@ -115,6 +115,14 @@ def plot_categorical_vars(df):
         plt.axhline(df[target].mean(), color='blue', linestyle='--')
         plt.show()
 
+def plot_county(df):
+    """This function is hardcoded to plot the county boxenplot for the final report."""
+    sns.boxenplot(data=df, x='county', y='assessed_worth', palette='Accent')
+    plt.title(f"County vs Assessed Worth")
+    plt.axhline(df.assessed_worth.mean(), color='purple', linestyle='-', linewidth=3, label='Average Worth')
+    plt.legend(fontsize='medium', loc=9)
+    plt.show()
+
 def plot_heatmap(df):
     """This functions returns a heatmap of a df"""
     worth_corr = df.corr(method='pearson')
@@ -122,24 +130,27 @@ def plot_heatmap(df):
     plt.title(f"Assessed Worth Correlation Heatmap")
     plt.show()
 
-def plot_bed_bath(train, bed, bath):
+def plot_bed(train, bed):
     """This function returns the violinplot graphs for the bed and bath columns
     in relation to the target variable of assessed worth."""
     sns.violinplot(data=train, x=bed, y='assessed_worth', palette='mako', alpha=.5)
     plt.yticks(ticks = np.arange(0, 1_000_000, step=150_000))
     plt.title(f"Number of Beds and Home Worth")
-    plt.axhline(train.assessed_worth.mean(), label=(f"Average Worth"), color='blue',linestyle='--')
-    plt.legend()
+    plt.plot([-1,4],[250000,500000],color='brown', linewidth=2, linestyle='--', label='Means Plotted')
+    plt.legend(fontsize='medium', loc=9)
     plt.show()
     print()
 
+def plot_bath(train, bath):
+    """This function returns the violinplot graphs for the bed and bath columns
+    in relation to the target variable of assessed worth."""
     sns.violinplot(data=train, x=bath, y='assessed_worth', palette='mako', alpha=.5)
     plt.yticks(ticks = np.arange(0, 1_000_000, step=150_000))
     plt.title(f"Number of Baths and Home Worth")
-    plt.axhline(train.assessed_worth.mean(), label=(f"Average Worth"), color='blue',linestyle='--')
-    plt.legend()
+    plt.plot([-0.1,7.5],[250000,900000],color='brown', linewidth=2, linestyle='--', label='Means Plotted')
+    plt.legend(fontsize='medium', loc=9)
     plt.show()
-    print()   
+    print()
 
 
 
@@ -169,14 +180,23 @@ def plot_sqft(df):
     """This function graphs the distribution of sqft and worth with mean lines"""
     #plot our sqft and worth
     plt.figure(figsize=(12,10))
-    sns.scatterplot(data=df, x='sqft', y='assessed_worth', alpha=.5,size=5, ci=None, legend=False)
+    sns.scatterplot(data=df, x='sqft', y='assessed_worth', color='green', alpha=.3,size=5, ci=None, legend=False) 
     plt.xlabel('Sqft')
     plt.ylabel('Worth')
-    plt.axhline(df.assessed_worth.mean(), color='purple', label='Average Worth', linewidth=3)
-    plt.axvline(df.sqft.mean(), color='purple', label='Average Sqft', linewidth=3)
-    plt.title(f"Distribution of Sqft and Worth")
+    plt.title(f"Distribution of Sqft and Worth Have Two Trend Lines")
+    plt.plot([500, 3000], [20000, 900_000], color='brown', linewidth=3, label='Trend Line Higher Worth')
+    plt.plot([500, 3500], [20000, 150_000], color='purple', linewidth=3, label='Trend Line Lower Worth')
+    plt.legend(fontsize='x-large', loc=9)
     plt.show()
 
+def plot_target(df):
+    plt.figure(figsize=(10, 10))
+    sns.histplot(df, label='Assessed Worth', palette='cubehelix')
+    plt.title('Distribution of Target Variable')
+    plt.xlabel(f'Assessed Worth')
+    plt.axvline(df.assessed_worth.mean(), linewidth=5, color='purple', label='Average Worth')
+    plt.legend(fontsize='x-large', loc=9)
+    plt.show()
 
 # -------------------------------------------------------------------------
 

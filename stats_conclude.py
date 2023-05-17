@@ -33,7 +33,11 @@ def conclude_1samp_tt(group1, group_mean):
     Compare observed mean to theoretical mean. (Non-parametric = Wilcoxon)
     Bubble in the bubble...
     ---
-    This function is a one-sample, two-tailed, t-test reliant on parametric data.
+    This function is a one-sample, two-tailed, t-test reliant on parametric data with
+    these assumptions: The dependent variable must be continuous (interval/ratio).
+    The observations are independent of one another.
+    The dependent variable should be approximately normally distributed.
+    The dependent variable should not contain any outliers.
     ---
     Sets alpha = 0.05, runs a one-sample, two-tailed test, evaluates the 
     pvalue and tstat against alpha, printing a conclusion statement.
@@ -55,7 +59,11 @@ def conclude_1samp_gt(group1, group_mean):
     Compare observed mean to theoretical mean. (Non-parametric = Wilcoxon)
     Bubble in the bubble...
     ---
-    This function is a one-sample, one-tailed, t-test reliant on parametric data.
+    This function is a one-sample, one-tailed, t-test reliant on parametric data with
+    these assumptions: The dependent variable must be continuous (interval/ratio).
+    The observations are independent of one another.
+    The dependent variable should be approximately normally distributed.
+    The dependent variable should not contain any outliers.
     ---
     Sets alpha = 0.05, runs a one-sample, one-tailed test (greater than), evaluates the 
     pvalue and tstat against alpha, and prints a conclusion statement.
@@ -77,7 +85,11 @@ def conclude_1samp_lt(group1, group_mean):
     Compare observed mean to theoretical mean. (Non-parametric = Wilcoxon)
     Bubble in the bubble...
     ---
-    This function is a one-sample, one-tailed, t-test reliant on parametric data.
+    This function is a one-sample, one-tailed, t-test reliant on parametric data with
+    these assumptions: The dependent variable must be continuous (interval/ratio).
+    The observations are independent of one another.
+    The dependent variable should be approximately normally distributed.
+    The dependent variable should not contain any outliers.
     ---
     Sets alpha = 0.05, runs a one-sample, one-tailed test (less than), evaluates the 
     pvalue and tstat against alpha, and prints a conclusion statement.
