@@ -27,12 +27,13 @@ My initial hypothesis is that property value is affected by the number of bathro
  
 * Explore data in search of drivers of worth
    * Answer the following initial questions:
-       1. What is more important for property value, bathrooms or bedrooms?
-       2. Does sqft affect value?
-       3. Does having A/C affect property value?
+       1. What is more important for worth: bathrooms or bedrooms?
+       2. Does sqft affect worth?
+       3. Does having A/C affect worth?
            * Unable to answer this question as during exploration the AC column had over 38,000 nulls
+       4. Does county affect worth?
        
-* Develop a Model to predict property values:
+* Develop a Model to predict worth:
     * Use drivers identified in the explore phase to build predictive models of different types.
     * Evaluate models on the train and validate datasets.
     * Select the best model based on the best fit.
@@ -41,7 +42,7 @@ My initial hypothesis is that property value is affected by the number of bathro
 * Draw conclusions
 	* Identify takeaways from zillow data.	 
 	* Make recommendations for improvements to the dataset.
-    * Merge findings back onto the zillow database to predict value of the home.
+    * Merge findings back onto the zillow database to predict worth of the home.
 
 # Data Dictionary
 
