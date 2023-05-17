@@ -40,9 +40,8 @@ My initial hypothesis is that property value is affected by the number of bathro
     * Evaluate the best model on the test data.
 
 * Draw conclusions
-	* Identify takeaways from zillow data.	 
-	* Make recommendations for improvements to the dataset.
-    * Merge findings back onto the zillow database to predict worth of the home.
+	* Identify drivers from zillow data. 
+	* Make recommendations for improvements.
 
 # Data Dictionary
 
@@ -62,13 +61,14 @@ My initial hypothesis is that property value is affected by the number of bathro
 4) Run notebook.
  
 # Takeaways and Conclusions
-* There is a feature that is not in this dataset that likely contributes greater to a house's worth. It may have to be engineered from existing features that are correlated and non-linear.
-* In this first iteration, we will proceed to modeling with the features we have confirmed to be relevant from the original dataset.
+* There is a feature(s) not in this dataset that contributes greater to a house's worth based on location.
+* In this first iteration, we will proceed to modeling with the features we have confirmed to be relevant.
 * Given more time I would ask for the data to be reengineered to potentially find and replace nulls with relevant information.
 * If that isn't possible I would try to engineer some features to increase accuracy.
     * Such as, combining pool, garage, air conditioning into one feature to see if that adds any value.
+    * Location features
 
 # Recommendations
-* Fill in the dataset by collecting more values to replace all the nulls
-* Engineer Features
-* It almost feels like real-life with the cheaper the house, the more important bedrooms, bathrooms, and sqft are. While the homes climb in price, these features become less important. Something else makes the worth and the sale...
+* For the data engineers: Engineer Location Features to improve predicatability of the model
+* For the data scientsists: Check for multicollinearity among the predictor variables and remove any highly correlated variables, replacing with new features
+* For the business: Improvements in features will increase performance and lead to better results
