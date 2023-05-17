@@ -438,7 +438,7 @@ def iterate_columns(df):
     # iterate through numerical
     for i in range(2, len(col_num) + 1):
         for combo in combinations(col_num, i):
-            corr, pval = pearsonr(df[combo[0]], df[combo[1]])
+            corr, pval = stats.pearsonr(df[combo[0]], df[combo[1]])
             if pval < α:
                 print(f'{combo}')
                 print(f'corr: {corr:.2f} > 0?')
