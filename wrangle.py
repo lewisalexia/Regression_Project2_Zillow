@@ -212,39 +212,6 @@ def scale_data(train, validate, test, to_scale):
     X_validate_scaled[to_scale] = scaler.transform(validate[to_scale])
     X_test_scaled[to_scale] = scaler.transform(test[to_scale])
     
-    #visualize
-    plt.figure(figsize=(13, 8))
-
-    plt.subplot(321)
-    plt.hist(train, bins=50, ec='black')
-    plt.title('Original Train')
-    plt.subplot(322)
-    plt.hist(X_train_scaled, bins=50, ec='black')
-    plt.title('Scaled Train')
-
-    plt.subplot(323)
-    plt.hist(validate, bins=50, ec='black')
-    plt.title('Original Validate')
-    plt.subplot(324)
-    plt.hist(X_validate_scaled, bins=50, ec='black')
-    plt.title('Scaled Validate')
-
-    plt.subplot(325)
-    plt.hist(test, bins=50, ec='black')
-    plt.title('Original Test')
-    plt.subplot(326)
-    plt.hist(X_test_scaled, bins=50, ec= 'black')
-    plt.title('Scaled Test')
-    
-    plt.subplots_adjust(left=0.1,
-                    bottom=0.1, 
-                    right=0.9, 
-                    top=0.9, 
-                    wspace=0.4, 
-                    hspace=0.4)
-    
-    plt.show()
-
     return X_train_scaled, X_validate_scaled, X_test_scaled
 
 

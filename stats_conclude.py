@@ -94,146 +94,132 @@ def conclude_1samp_lt(group1, group_mean):
     else:
         print('We fail to reject the null hypothesis.')
 
-def conclude_2samp_tt(sample1, sample2):
-    """Goal: ((compare one categorical and one continuous variable))
-    Compare two observed means (independent samples). (Non-parametric = Mann-Whitney's)
-    ---
-    This function is a two-sample, two-tailed, t-test reliant on
-    parametric data, independence, and equal variances.
-    ---
-    Sets alpha to 0.05, performs Levene Test, runs a two-sample, 
-    two-tailed test, evaluates the pvalue against alpha, and prints 
-    a conclusion statementusing the outcome of the Levene test.
+def compare_categorical_continuous(categorical_var, continuous_var, data):
     """
-
-    α = 0.05
+    Goal: ((compare one categorical and one continuous variable)) Compare two observed means (independent samples). (Non-parametric = Mann-Whitney's)
+    --- This function is a two-sample, two-tailed, t-test reliant on parametric data, independence, and equal variances.
+    --- Sets alpha to 0.05, performs Levene Test, runs a two-sample, two-tailed test, evaluates the pvalue against alpha, and prints a conclusion statement using the outcome of the Levene test.
     
-    # Check Variance
-    tstat, pval = stats.levene(sample1, sample2)
-    print(f"Running Levene Test...")
-    if pval > α:
-        print(f'p-value: {pval:.10f} > {α}?')
-        print(f"Variance is True")
-        
-        # Perform test for true variance
-        tstat, p = stats.ttest_ind(sample1, sample2, equal_var=True)
-        print(f"Assumptions are met: Two-Sample, Two-Tailed, 'equal_Var=True', T-Test successful...")    
-        print(f't-stat: {tstat}')
-        print(f'p-value: {p:.10f} < {α}?')
-        print('----')
-        if p < α:
-            print("We can reject the null hypothesis.")
-        else:
-            print('We fail to reject the null hypothesis.')
-        
-    else:
-        print(f'p-value: {pval:.10f} < {α}?')
-        print(f"Variance is False")
-        
-        # Perform test for False variance
-        tstat, p = stats.ttest_ind(sample1, sample2, equal_var=False)
-        print(f"Assumptions are met: Two-Sample, Two-Tailed, 'equal_Var=False', T-Test successful...")    
-        print(f't-stat: {tstat}')
-        print(f'p-value: {p:.10f} < {α}?')
-        print('----')
-        if p < α:
-            print("We can reject the null hypothesis.")
-        else:
-            print('We fail to reject the null hypothesis.')
-
-def conclude_2samp_gt(sample1, sample2):
-    """Goal: ((compare one categorical and one continuous variable))
-    Compare two observed means (independent samples). (Non-parametric = Mann-Whitney's)
-    ---
-    This function is a two-sample, right-tailed, t-test reliant on
-    parametric data, independence, and equal variances.
-    ---
-    Sets alpha to 0.05, performs Levene Test, runs a two-sample, 
-    right-tailed test, evaluates the pvalue against alpha, and prints 
-    a conclusion statementusing the outcome of the Levene test.
-    """
-
-    α = 0.05
-
-    # Check Variance
-    tstat, pval = stats.levene(sample1, sample2)
-    print(f"Running Levene Test...")
-    if pval > α:
-        print(f'p-value: {pval:.10f} > {α}?')
-        print(f"Variance is True")
-
-        # Perform test for True variance
-        tstat, p = stats.ttest_ind(sample1, sample2, equal_var=True)
-        print(f"Assumptions are met: Two-Sample, Right-Tailed, 'equal_Var=True', T-Test successful...")
-        print(f't-stat: {tstat} > 0?')
-        print(f'p-value: {p/2} < {α}?')
-        print('----')
-        if (((p/2) < α) and (tstat > 0)):
-            print("We can reject the null hypothesis.")
-        else:
-            print('We fail to reject the null hypothesis.')
-
-    else:
-        print(f'p-value: {pval:.10f} < {α}?')
-        print(f"Variance is False")
-        
-        # Perform test for False variance
-        tstat, p = stats.ttest_ind(sample1, sample2, equal_var=False)
-        print(f"Assumptions are met: Two-Sample, Right-Tailed, 'equal_Var=False',T-Test successful...")    
-        print(f't-stat: {tstat}')
-        print(f'p-value: {p:.10f} < {α}?')
-        print('----')
-        if (((p/2) < α) and (tstat > 0)):
-            print("We can reject the null hypothesis.")
-        else:
-            print('We fail to reject the null hypothesis.')
-
-def conclude_2samp_lt(sample1, sample2):
-    """Goal: ((compare one categorical and one continuous variable))
-    Compare two observed means (independent samples). (Non-parametric = Mann-Whitney's)
-    ---
-    This function is a two-sample, left-tailed, t-test reliant on
-    parametric data, independence, and equal variances.
-    ---
-    Sets alpha to 0.05, runs a Levene test, runs a two-sample, 
-    left-tailed (less than) test, evaluates the pvalue against alpha, and 
-    prints a conclusion statement using the outcome of the Levene test.
-    """
-
-    α = 0.05
-
-    # Check Variance
-    tstat, pval = stats.levene(sample1, sample2)
-    print(f"Running Levene Test...")
-    if pval > α:
-        print(f'p-value: {pval:.10f} > {α}?')
-        print(f"Variance is True")
-
-        # Perform test for True variance
-        tstat, p = stats.ttest_ind(sample1, sample2, equal_var=True)
-        print(f"Assumptions are met: Two-Sample, Left-Tailed, 'equal_Var=True', T-Test successful...")
-        print(f't-stat: {tstat} < 0?')
-        print(f'p-value: {p/2} < {α}?')
-        print('\n----')
-        if (((p/2) < α) and (tstat < 0)):
-            print("we can reject the null hypothesis.")
-        else:
-            print('We fail to reject the null hypothesis.')
+    Parameters:
+    categorical_var (str): Name of the categorical variable
+    continuous_var (str): Name of the continuous variable
+    data (pandas DataFrame): DataFrame containing the data
     
+    Prints: p-value statement assessing the significance of the test.
+    """
+    alpha = 0.05
+    
+    # Perform Levene Test for equal variances
+    stat, p = stats.levene(data[continuous_var][data[categorical_var] == 0], data[continuous_var][data[categorical_var] == 1])
+    print('Levene Test Successful')
+    
+    # Run two-sample, two-tailed t-test
+    t_stat, p_val = stats.ttest_ind(data[continuous_var][data[categorical_var] == 0], data[continuous_var][data[categorical_var] == 1], equal_var=True)
+    
+    # Evaluate p-value against alpha
+    if p < alpha:
+        print(f"Levene test p-value = {p:.10f}. Variances are significantly different. Using Welch's t-test.")
+        t_stat, p_val = stats.ttest_ind(data[continuous_var][data[categorical_var] == 0], data[continuous_var][data[categorical_var] == 1], equal_var=False)
+    
+    if p_val < alpha:
+        print(f"p-value = {p_val:.10f}. There is a significant difference between the means of {categorical_var} and {continuous_var}.")
     else:
-        print(f'p-value: {pval:.10f} < {α}?')
-        print(f"Variance is False")
+        print(f"p-value = {p_val:.10f}. There is no significant difference between the means of {categorical_var} and {continuous_var}.")
 
-        # Perform test for False variance        
-        tstat, p = stats.ttest_ind(sample1, sample2, equal_var=False)
-        print(f"Assumptions are met: Two-Sample, Right-Tailed, 'equal_Var=False', T-Test successful...")    
-        print(f't-stat: {tstat}')
-        print(f'p-value: {p:.10f} < {α}?')
-        print('----')
-        if (((p/2) < α) and (tstat < 0)):
-            print("We can reject the null hypothesis.")
-        else:
-            print('We fail to reject the null hypothesis.')
+
+# def conclude_2samp_gt(sample1, sample2):
+#     """Goal: ((compare one categorical and one continuous variable))
+#     Compare two observed means (independent samples). (Non-parametric = Mann-Whitney's)
+#     ---
+#     This function is a two-sample, right-tailed, t-test reliant on
+#     parametric data, independence, and equal variances.
+#     ---
+#     Sets alpha to 0.05, performs Levene Test, runs a two-sample, 
+#     right-tailed test, evaluates the pvalue against alpha, and prints 
+#     a conclusion statementusing the outcome of the Levene test.
+#     """
+
+#     α = 0.05
+
+#     # Check Variance
+#     tstat, p = stats.levene(sample1, sample2)
+#     print(f"Running Levene Test...")
+#     if p > α:
+#         print(f'p-value: {p:.10f} > {α}?')
+#         print(f"Variance is True")
+
+#         # Perform test for True variance
+#         tstat, p = stats.ttest_ind(sample1, sample2, equal_var=True)
+#         print(f"Assumptions are met: Two-Sample, Right-Tailed, 'equal_Var=True', T-Test successful...")
+#         print(f't-stat: {tstat} > 0?')
+#         print(f'p-value: {p/2} < {α}?')
+#         print('----')
+#         if (((p/2) < α) and (tstat > 0)):
+#             print("We can reject the null hypothesis.")
+#         else:
+#             print('We fail to reject the null hypothesis.')
+
+#     else:
+#         print(f'p-value: {p:.10f} < {α}?')
+#         print(f"Variance is False")
+        
+#         # Perform test for False variance
+#         tstat, p = stats.ttest_ind(sample1, sample2, equal_var=False)
+#         print(f"Assumptions are met: Two-Sample, Right-Tailed, 'equal_Var=False',T-Test successful...")    
+#         print(f't-stat: {tstat}')
+#         print(f'p-value: {p:.10f} < {α}?')
+#         print('----')
+#         if (((p/2) < α) and (tstat > 0)):
+#             print("We can reject the null hypothesis.")
+#         else:
+#             print('We fail to reject the null hypothesis.')
+
+# def conclude_2samp_lt(sample1, sample2):
+#     """Goal: ((compare one categorical and one continuous variable))
+#     Compare two observed means (independent samples). (Non-parametric = Mann-Whitney's)
+#     ---
+#     This function is a two-sample, left-tailed, t-test reliant on
+#     parametric data, independence, and equal variances.
+#     ---
+#     Sets alpha to 0.05, runs a Levene test, runs a two-sample, 
+#     left-tailed (less than) test, evaluates the pvalue against alpha, and 
+#     prints a conclusion statement using the outcome of the Levene test.
+#     """
+
+#     α = 0.05
+
+#     # Check Variance
+#     tstat, p = stats.levene(sample1, sample2)
+#     print(f"Running Levene Test...")
+#     if p > α:
+#         print(f'p-value: {p:.10f} > {α}?')
+#         print(f"Variance is True")
+
+#         # Perform test for True variance
+#         tstat, p = stats.ttest_ind(sample1, sample2, equal_var=True)
+#         print(f"Assumptions are met: Two-Sample, Left-Tailed, 'equal_Var=True', T-Test successful...")
+#         print(f't-stat: {tstat} < 0?')
+#         print(f'p-value: {p/2} < {α}?')
+#         print('\n----')
+#         if (((p/2) < α) and (tstat < 0)):
+#             print("we can reject the null hypothesis.")
+#         else:
+#             print('We fail to reject the null hypothesis.')
+    
+#     else:
+#         print(f'p-value: {p:.10f} < {α}?')
+#         print(f"Variance is False")
+
+#         # Perform test for False variance        
+#         tstat, p = stats.ttest_ind(sample1, sample2, equal_var=False)
+#         print(f"Assumptions are met: Two-Sample, Right-Tailed, 'equal_Var=False', T-Test successful...")    
+#         print(f't-stat: {tstat}')
+#         print(f'p-value: {p:.10f} < {α}?')
+#         print('----')
+#         if (((p/2) < α) and (tstat < 0)):
+#             print("We can reject the null hypothesis.")
+#         else:
+#             print('We fail to reject the null hypothesis.')
 
 
 

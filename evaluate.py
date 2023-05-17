@@ -1,3 +1,7 @@
+
+import pandas as pd
+import numpy as np
+
 from sklearn.metrics import mean_squared_error, r2_score
 from sklearn.linear_model import LinearRegression, LassoLars, TweedieRegressor
 from sklearn.preprocessing import PolynomialFeatures
@@ -124,3 +128,105 @@ def rfe(X_train_scaled, y_train, n_features):
      # return column names
     print(f"These are the top {n_features} columns selected from RFE model:")
     return X_train_RFEtransformed.columns.tolist()
+
+def baseline_test(X_train_scaled, y_train, X_test_scaled, y_test):
+    """This function built to establish baseline on train and then test on test,
+    returns a dataframe of results along with SSE_baseline and SSE.
+    ---
+    Format: SSE, SSE_baseline, metrics_df = function()
+    """
+
+    # baseline
+    baseline = y_train.mean().round(2)
+    baseline
+
+    # make array
+    baseline_array = np.repeat(baseline, len(X_train_scaled))
+    baseline_array
+
+    # evaluate
+    rmse, r2 = metrics_reg(y_train, baseline_array)
+    rmse, r2
+
+    # put baseline prediction into metrics df
+    metrics_df = pd.DataFrame(data=[
+        {
+            'Model':'Baseline',
+            'RMSE':rmse,
+            'R2':r2
+        }
+        
+    ])
+    metrics_df
+
+    # USE POLY-2 ON TEST
+    # make the polynomial features to get a new set of features
+    pf = PolynomialFeatures(degree=2)
+
+    # fit and transform X_train_scaled
+    X_train_degree = pf.fit_transform(X_train_scaled)
+
+    # transform X_validate_scaled
+    X_test_degree = pf.transform(X_test_scaled)
+
+    #make it
+    pr = LinearRegression()
+
+    #fit it
+    pr.fit(X_train_degree, y_train)
+
+    #use it on train and test
+    pred_lr1 = pr.predict(X_train_degree)
+    pred_pr = pr.predict(X_test_degree)
+
+    #validate
+    rmse, r2 = metrics_reg(y_test, pred_pr)
+    rmse, r2
+
+    # MSE
+    MSE = mean_squared_error(y_train, pred_lr1)
+    SSE = MSE * len(X_train_scaled)
+
+    # SSE_baseline
+    MSE_baseline = mean_squared_error(y_train, baseline_array)
+    SSE_baseline = MSE_baseline * len(X_train_scaled)
+
+    #add to my metrics df
+    metrics_df.loc[1] = ['POLY_2', rmse, r2]
+    metrics_df
+
+    return SSE, SSE_baseline, metrics_df
+
+
+def to_csv(train, test):
+# create a dataframe with parcelid and house worth
+    from sklearn.ensemble import RandomForestClassifier
+    import pandas as pd
+    X_train = train[[
+        'phone_service',
+        'multiple_lines',
+        'monthly_charges',
+        'total_charges',
+        'contract_type_One year',
+        'contract_type_Two year',
+        'internet_service_type_Fiber optic',
+        'internet_service_type_None']]
+    X_test = test[[
+        'phone_service',
+        'multiple_lines',
+        'monthly_charges',
+        'total_charges',
+        'contract_type_One year',
+        'contract_type_Two year',
+        'internet_service_type_Fiber optic',
+        'internet_service_type_None']]
+    y_train = train['churn']
+    y_test = test['churn']
+    rf = RandomForestClassifier(random_state = 123,max_depth = 6)
+    rf.fit(X_test, y_test)
+    prediction_df = pd.DataFrame({'customer_id': test.customer_id,
+                                  'probability_of_churn': rf.predict_proba(X_test)[:,1],
+                                  'prediction_of_churn': rf.predict(X_test)})
+    prediction_df
+    # export the dataframe to csv
+    prediction_df.to_csv('predictions.csv')

@@ -44,15 +44,13 @@ def hist_zillow(df):
     plt.show() 
 
 def visual_explore_univariate(df):
-    """This function takes in a DF and explores each variable visually
-    as well as the value_counts to identify outliers.
-    Works for numerical."""
-    for col in df.columns[:-3]:
-        print(col)
-        sns.boxplot(data=df, x=col)
+    """This function takes in a DF and explores each variable visually as well as the value_counts to identify outliers. Works for numerical."""
+    for i, col in enumerate(df.columns[:-3]):
+        plt.subplot(3,1,i+1)
+        sns.boxplot(data=df, x=col, palette='Spectral')
+        plt.title(f"{col.capitalize()} Boxplot")
         plt.show()
-        print(df[col].value_counts().sort_index())
-        print() 
+
 
     
 def plot_variable_pairs(df):
@@ -62,14 +60,13 @@ def plot_variable_pairs(df):
              , palette="Accent")
     plt.show()
 
-def plot_categorical_and_continuous_vars(df):
+def plot_categorical_vars(df):
     """This function takes in a df and a hardcoded target variable to explore.
-    
-    This function is meant to assign the df columns to categorical and numerical 
-    columns. The default for numerical is to be continuous (col_num). 
-    
+    ---
+    This function assigns the df columns to categorical and numerical lists. 
+    ---
     Object types indicate "buckets" which indicates a categorical variable (col_cat).
-
+    ---
     The function will then print for each col in col_cat:
         * Value Counts
         * Proportional size of data
@@ -77,12 +74,9 @@ def plot_categorical_and_continuous_vars(df):
         * Analysis and summary using CHI^2 test function (chi2_test from stats_conclude.py)
         * A conclusion statement
         * A graph representing findings
-
-    The function will then print for each col in col_num:
-        * A graph with two means compared to the target variable.
     """
     col_cat = [] #this is for my categorical varibles
-    col_num = [] #this is for my numerical varibles
+    col_num = [] #this is for my numerical varibles (not using this at the moment)
     target = 'assessed_worth' # assigning target variable
     
     # assign
@@ -94,38 +88,35 @@ def plot_categorical_and_continuous_vars(df):
             
     # iterate through categorical
     for col in col_cat:
-        print(f"Categorical Columns\n**{col.upper()}**")
+        print(f"{col.capitalize()} Count")
         print(df[col].value_counts())
+        print('---')
+        print('Proportion of Dataset')
         print(round(df[col].value_counts(normalize=True)*100),2)
-        print()
-        print(f'HYPOTHESIZE')
-        print(f"H_0: {col.lower().replace('_',' ')} does not affect {target}")
-        print(f"H_a: {col.lower().replace('_',' ')} affects {target}")
-        print()
-        print('ANALYZE and SUMMARIZE')
+        print('---')
+        print(f'Hypothesize')
+        print(f"H_0: {col.capitalize().replace('_',' ')} does not affect {target.replace('_',' ')}")
+        print(f"H_a: {col.capitalize().replace('_',' ')} affects {target.replace('_',' ')}")
+        print('---')
+        print('Analyze')
         observed = pd.crosstab(df[col], df[target])
         α = 0.05
         chi2, pval, degf, expected = stats.chi2_contingency(observed)
-        print(f'chi^2 = {chi2:.4f}')
         print(f'p-value = {pval} < {α}')
         print('----')
         if pval < α:
-            print ('We reject the null hypothesis.')
+            print (f"We reject the null hypothesis, County does affect {target.replace('_',' ')}.")
         else:
-            print ("We fail to reject the null hypothesis.")
+            print (f"We fail to reject the null hypothesis, County does not affect {target.replace('_',' ')}.")
     
         # visualize
         sns.boxenplot(data=df, x=col, y=target, palette='Accent')
-        plt.title(f"boxenplot of {col.lower().replace('_',' ')} vs {target}")
-        plt.axhline(df[target].mean(), color='black')
+        plt.title(f"boxenplot of {col.capitalize().replace('_',' ')} vs {target.replace('_',' ')}")
+        plt.axhline(df[target].mean(), color='blue', linestyle='--')
         plt.show()
-        
-    # looking at numericals
-    print(f"Numerical Columns")
-    
-    # visualize
-    # We already determined that all of the columns were normally distributed.
-    # create the correlation matrix using pandas .corr() using pearson's method
+
+def plot_heatmap(df):
+    """This functions returns a heatmap of a df"""
     worth_corr = df.corr(method='pearson')
     sns.heatmap(worth_corr, cmap='PRGn', annot=True, mask=np.triu(worth_corr))
     plt.title(f"Assessed Worth Correlation Heatmap")
@@ -145,7 +136,6 @@ def plot_bed_bath(train, bed, bath):
     sns.violinplot(data=train, x=bath, y='assessed_worth', palette='mako', alpha=.5)
     plt.yticks(ticks = np.arange(0, 1_000_000, step=150_000))
     plt.title(f"Number of Baths and Home Worth")
-    plt.axvline(train.bath.mean(), label=(f"Bath Count Mean"), color='red',linestyle='--')
     plt.axhline(train.assessed_worth.mean(), label=(f"Average Worth"), color='blue',linestyle='--')
     plt.legend()
     plt.show()
@@ -178,23 +168,24 @@ def plot_variables(df, bed, bath):
 def plot_sqft(df):
     """This function graphs the distribution of sqft and worth with mean lines"""
     #plot our sqft and worth
-    sns.scatterplot(data=df, x='sqft', y='assessed_worth', alpha=.5,size=5, ci=None, palette='colorblind', legend=False)
+    plt.figure(figsize=(12,10))
+    sns.scatterplot(data=df, x='sqft', y='assessed_worth', alpha=.5,size=5, ci=None, legend=False)
     plt.xlabel('Sqft')
     plt.ylabel('Worth')
-    plt.axhline(df.assessed_worth.mean(), color='white', label='Average Worth')
-    plt.axvline(df.sqft.mean(), color='white', label='Average Sqft')
+    plt.axhline(df.assessed_worth.mean(), color='purple', label='Average Worth', linewidth=3)
+    plt.axvline(df.sqft.mean(), color='purple', label='Average Sqft', linewidth=3)
     plt.title(f"Distribution of Sqft and Worth")
     plt.show()
 
 
 # -------------------------------------------------------------------------
 
-# KEILA'S BATHROOM FULL AND HALF CODE
-def categorize_bathrooms(bath):
-    if bath.is_integer():
-        return 'full'
-    else:
-        return 'half'
+# # KEILA'S BATHROOM FULL AND HALF CODE
+# def categorize_bathrooms(bath):
+#     if bath.is_integer():
+#         return 'full'
+#     else:
+#         return 'half'
     
 # create a new column with the categorized bathrooms
 # train['bathroom_type'] = train['bathroom'].apply(categorize_bathrooms)
@@ -203,21 +194,23 @@ def categorize_bathrooms(bath):
 
 # ENCODE
 
-def encode_zillow(df_clean):
+def encode_zillow(df):
     """This function encodes a df
     ---
     Format: df_encoded = function()
     """
+    # HARDCODED drop
+    df = df.drop(columns=['date'])
 
     # encode / get dummies
-    dummy_df = pd.get_dummies(df_clean[['county']], dummy_na=False, drop_first=True)
+    dummy_df = pd.get_dummies(df[['county']], dummy_na=False, drop_first=True)
     print(f"Encoded County column and renamed encoded columns for readability")
 
     # clean up and return final product
-    df_encoded = pd.concat([df_clean, dummy_df], axis=1)
-    df_encoded = df_clean.drop(columns=['county'])
-    df_encoded = df_clean.rename(columns={'county_Orange':'orange', 'county_Ventura':'ventura'})
-    
+    df = pd.concat([df, dummy_df], axis=1)
+    df_encoded = df.rename(columns={'county_Orange':'orange', 'county_Ventura':'ventura'})
+    df_encoded = df_encoded.drop(columns=['county'])
+
     print(f"DataFrame is encoded and ready for modeling. :)")
 
     return df_encoded
